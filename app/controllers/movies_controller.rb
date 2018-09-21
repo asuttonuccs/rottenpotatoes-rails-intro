@@ -21,6 +21,14 @@ class MoviesController < ApplicationController
     else
         @movies = Movie.all
     end
+   # if params[:ratings]
+    #    @movies = Movie.where(:rating => params[:ratings].keys).find(:all, :order => (params[:sort]))
+    #end
+    #@all_ratings = Movie.all_ratings
+    #@set_ratings = params[:ratings]
+    #if !@set_tatings
+    #    @set_ratings = Hash.new
+    #end
   end
 
   def new
