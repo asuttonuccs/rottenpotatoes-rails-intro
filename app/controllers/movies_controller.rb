@@ -11,16 +11,51 @@ class MoviesController < ApplicationController
   end
 
   def index
-    
-
-    @movies = Movie.order(params[:sort])
-    
-  
-    if params[:ratings]
-        @movies = Movie.order(params[:sort]).where(:rating => params[:ratings].keys)
-    end
-    @sort_column = params[:sort]
     @all_ratings = Movie.all_ratings
+    
+    redirect = false
+    if params[:sort]
+        @sort = params[:sort]
+        session[:sort] = params[:sort]
+    elsif session[:sort]
+        @sort = session[:sort]
+        redirect = true
+    else
+        @sort = nil
+    end
+    
+    if params[:commit] == "Refesh" and params[:rating].nil?
+        @ratings = nil
+        session[:ratings] = nil
+    elsif params[:ratings]
+        @ratings = params[:ratings]
+        session[:ratings] = params[:ratings]
+    elsif session[:ratings] 
+        @ratings = session[:ratings]
+        redirect = true
+    else
+        @ratings = nil
+    end
+    
+    if redirect
+        flash.keep
+        redirect_to movies_path :sort => @sort, :ratings => @ratings
+    end
+
+    
+    if @ratings and @sort
+        @movies = Movie.order(@sort).where(:rating => @ratings.keys)
+    elsif @ratings
+        @movies = Movie.where(:rating => @ratings.keys)
+    elsif @sort
+        @movies = Movie.order(@sort)
+    else
+        @movies = Movie.all
+    end
+
+    
+    
+    
 
 
   end
